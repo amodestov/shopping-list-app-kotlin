@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">shopping-list-kotlin-app</string>
+    <string name="add_button">Add button</string>
+</resources>
