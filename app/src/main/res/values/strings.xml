@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">shopping-list-kotlin-app</string>
     <string name="add_button">Add button</string>
+    <string name="hint_name">Name:</string>
+    <string name="hint_count">Count:</string>
+    <string name="save">Save</string>
+    <string name="error_input_count">Count must be a positive integer</string>
+    <string name="error_input_name">Name must not be blank</string>
 </resources>

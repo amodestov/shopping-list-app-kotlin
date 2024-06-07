@@ -3,11 +3,11 @@ package com.aleksandrmodestov.shopping_list_kotlin_app.domain
 data class ShopItem(
     val name: String,
     val count: Int,
-    var isEnabled:Boolean,
-    var id: Int = UNDEFINED
+    var isEnabled: Boolean,
+    var id: Int = UNDEFINED_ID
 ) {
-    companion object{
+    companion object {
 
-        const val UNDEFINED = -1
+        const val UNDEFINED_ID = -1
     }
 }

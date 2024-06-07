@@ -9,11 +9,13 @@ import com.aleksandrmodestov.shopping_list_kotlin_app.R
 import com.aleksandrmodestov.shopping_list_kotlin_app.presentation.ShopListAdapter.Companion.MAX_POOL_SIZE
 import com.aleksandrmodestov.shopping_list_kotlin_app.presentation.ShopListAdapter.Companion.VIEW_TYPE_DISABLED
 import com.aleksandrmodestov.shopping_list_kotlin_app.presentation.ShopListAdapter.Companion.VIEW_TYPE_ENABLED
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
+    private lateinit var buttonAddItem: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +24,11 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
+        }
+        buttonAddItem = findViewById(R.id.button_add_shop_item)
+        buttonAddItem.setOnClickListener {
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
         }
     }
 
@@ -70,6 +77,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpClickListener() {
         shopListAdapter.onShopItemClickListener = {
+            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+            startActivity(intent)
         }
     }
 
