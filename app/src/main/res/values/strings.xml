@@ -6,4 +6,5 @@
     <string name="save">Save</string>
     <string name="error_input_count">Count must be a positive integer</string>
     <string name="error_input_name">Name must not be blank</string>
+    <string name="success_toast">Success</string>
 </resources>

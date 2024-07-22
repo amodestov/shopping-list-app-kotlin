@@ -1,7 +1,10 @@
 package com.aleksandrmodestov.shopping_list_kotlin_app.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -11,15 +14,17 @@ import com.aleksandrmodestov.shopping_list_kotlin_app.presentation.ShopListAdapt
 import com.aleksandrmodestov.shopping_list_kotlin_app.presentation.ShopListAdapter.Companion.VIEW_TYPE_ENABLED
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private lateinit var buttonAddItem: FloatingActionButton
+    private var shopItemContainer: FragmentContainerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        shopItemContainer = findViewById(R.id.shop_item_container)
         setUpRecyclerView()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
@@ -27,9 +32,17 @@ class MainActivity : AppCompatActivity() {
         }
         buttonAddItem = findViewById(R.id.button_add_shop_item)
         buttonAddItem.setOnClickListener {
-            val intent = ShopItemActivity.newIntentAddItem(this)
-            startActivity(intent)
+            if (shouldDisplayItemShopFragment()) {
+                launchFragment(ShopItemFragment.newInstanceAddItem())
+            } else {
+                val intent = ShopItemActivity.newIntentAddItem(this)
+                startActivity(intent)
+            }
         }
+    }
+
+    private fun shouldDisplayItemShopFragment(): Boolean {
+        return shopItemContainer != null
     }
 
     private fun setUpRecyclerView() {
@@ -77,8 +90,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpClickListener() {
         shopListAdapter.onShopItemClickListener = {
-            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
-            startActivity(intent)
+            if (shouldDisplayItemShopFragment()) {
+                launchFragment(ShopItemFragment.newInstanceEditItem(it.id))
+            } else {
+                val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+                startActivity(intent)
+            }
         }
     }
 
@@ -86,5 +103,18 @@ class MainActivity : AppCompatActivity() {
         shopListAdapter.onShopItemLongClickListener = {
             viewModel.changeShopItemState(it)
         }
+    }
+
+    private fun launchFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity, R.string.success_toast, Toast.LENGTH_LONG).show()
+        supportFragmentManager.popBackStack()
     }
 }

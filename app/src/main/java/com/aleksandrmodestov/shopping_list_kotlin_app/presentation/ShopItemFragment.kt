@@ -1,5 +1,6 @@
 package com.aleksandrmodestov.shopping_list_kotlin_app.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,6 +16,8 @@ import com.aleksandrmodestov.shopping_list_kotlin_app.domain.ShopItem
 import com.google.android.material.textfield.TextInputLayout
 
 class ShopItemFragment : Fragment() {
+
+    private lateinit var onEditingFinishedListener : OnEditingFinishedListener
 
     private lateinit var viewModel: ShopItemViewModel
 
@@ -47,6 +50,15 @@ class ShopItemFragment : Fragment() {
         addTextChangeListeners()
         setMode()
         observeViewModel()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException("Activity must implement OnEditingFinishedListener")
+        }
     }
 
     private fun parseParams() {
@@ -85,7 +97,7 @@ class ShopItemFragment : Fragment() {
             tilName.error = message
         }
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -148,6 +160,9 @@ class ShopItemFragment : Fragment() {
         buttonSave = view.findViewById(R.id.save_button)
     }
 
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
+    }
 
     companion object {
 
